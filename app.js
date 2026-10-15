@@ -1,5 +1,5 @@
 /* =========================================================
-   ODDORA — MAIN ENGINE (CLEAN V2)
+   ODDORA â€” MAIN ENGINE (CLEAN V2)
    File: app.js
    ========================================================= */
 
@@ -274,14 +274,17 @@ function loadGameScript(game) {
 
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
-    script.src = `${ODDORA_CONFIG.gameFolder}${game.file}`;
+    // Using relative path explicitly so GitHub Pages subdirectories work:
+    script.src = `./games/${game.file}`;
+    
     script.onload = () => {
       loadedScripts.add(game.id);
       const module = window.OddoraGames?.[game.id];
       if (module) resolve(module);
       else reject(new Error("Module load failed"));
     };
-    script.onerror = () => reject(new Error("Script file missing"));
+    
+    script.onerror = () => reject(new Error("Script file missing at " + script.src));
     document.body.appendChild(script);
   });
 }
@@ -354,7 +357,7 @@ function createGameCard(game) {
     <h3 class="game-card-title">${game.title}</h3>
     <p class="game-card-description">${game.description}</p>
     <div class="game-card-footer">
-      <div class="game-card-meta"> ${game.players} •  ${game.xp} XP</div>
+      <div class="game-card-meta"> ${game.players} â€¢  ${game.xp} XP</div>
       <div class="game-card-play"></div>
     </div>
   `;
