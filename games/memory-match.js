@@ -279,18 +279,18 @@ window.OddoraGames["memory-match"] = {
     function triggerAITurn() {
       if (matchedPairs === totalPairs || activePlayer !== 2) return;
 
-      const un-flipped = cards
+      const unflipped = cards
         .map((c, i) => ({ ...c, i }))
         .filter(c => !c.matched && !flippedCards.some(fc => fc.idx === c.i));
 
-      if (un-flipped.length < 2) return;
+      if (unflipped.length < 2) return;
 
       // Pick two random cards
-      const rand1 = un-flipped[Math.floor(Math.random() * un-flipped.length)];
+      const rand1 = unflipped[Math.floor(Math.random() * unflipped.length)];
       handleCardClick(rand1.i, rand1.icon, rand1.element);
 
       setTimeout(() => {
-        const remaining = un-flipped.filter(c => c.i !== rand1.i);
+        const remaining = unflipped.filter(c => c.i !== rand1.i);
         const rand2 = remaining[Math.floor(Math.random() * remaining.length)];
         handleCardClick(rand2.i, rand2.icon, rand2.element);
       }, 700);
