@@ -1,5 +1,5 @@
 /* =========================================================
-   ODDORA GAMES — PIXEL SHOWDOWN: SHADOW HUNT (EASY UI)
+   ODDORA GAMES — PIXEL SHOWDOWN: SHADOW HUNT (EASY WIN RULES)
    File: games/shadow-duel.js
    ========================================================= */
 
@@ -29,16 +29,17 @@ window.OddoraGames["shadow-duel"] = {
       container.innerHTML = `
         <div style="max-width: 480px; margin: 0 auto; text-align: center; background: var(--surface); padding: 20px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
           <h2 style="font-size: 22px; font-weight: 900; margin-bottom: 6px; color: #a855f7;">🥷 Shadow Hunt</h2>
-          <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">
-            2D Stealth Battle Arena
-          </p>
-
-          <!-- 3-STEP QUICK GUIDE -->
-          <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; text-align: left; margin-bottom: 20px; font-size: 11px; border: 1px solid rgba(255,255,255,0.1);">
-            <div style="font-weight: 800; color: #a3e635; margin-bottom: 8px; text-transform: uppercase;">📖 How to Play:</div>
-            <div style="margin-bottom: 6px;">1️⃣ <b>Hide:</b> Opponents CANNOT see you in the dark.</div>
-            <div style="margin-bottom: 6px;">2️⃣ <b>Move:</b> Tap glowing tiles to step silently (1 AP).</div>
-            <div style="margin-bottom: 6px;">3️⃣ <b>Attack:</b> Plant traps 💣 or Shoot 🎯 (Shooting reveals your position!).</div>
+          
+          <!-- HOW TO WIN CARD -->
+          <div style="background: rgba(168, 85, 247, 0.15); border: 1px solid #a855f7; padding: 14px; border-radius: 12px; text-align: left; margin-bottom: 20px; font-size: 12px;">
+            <div style="font-weight: 900; color: #a855f7; font-size: 14px; margin-bottom: 6px;">🎯 HOW TO WIN:</div>
+            <div style="margin-bottom: 8px;">Find and attack your opponent until their <b>HP reaches 0%</b>!</div>
+            
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0;">
+            
+            <div style="font-weight: 800; color: #a3e635; margin-bottom: 4px;">⚡ How to Attack:</div>
+            <div style="margin-bottom: 4px;">🎯 <b>Fire Cannon:</b> Deals <b>45 Damage</b> to nearby tile.</div>
+            <div>💣 <b>Plant Trap:</b> Deals <b>35 Damage</b> if stepped on.</div>
           </div>
           
           <div style="margin-bottom: 20px; text-align: left;">
@@ -50,7 +51,7 @@ window.OddoraGames["shadow-duel"] = {
           </div>
 
           <button id="sh-start-btn" class="primary-button" style="width: 100%; padding: 14px; font-size: 16px;">
-            Start Match 🔥
+            Start Battle 🔥
           </button>
         </div>
       `;
@@ -74,7 +75,7 @@ window.OddoraGames["shadow-duel"] = {
       gameActive = true;
       activePlayer = 1;
       ap = 3;
-      logs = ["Match Started! You are hidden in the fog."];
+      logs = ["Battle Started! Reduce enemy HP to 0% to win."];
 
       p1 = { x: 0, y: 0, hp: 100, traps: 2, revealedTurns: 0 };
       p2 = { x: 5, y: 5, hp: 100, traps: 2, revealedTurns: 0 };
@@ -149,16 +150,32 @@ window.OddoraGames["shadow-duel"] = {
             cursor: pointer;
           }
           .sh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+          .hp-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+          }
+          .hp-bar-fill {
+            height: 100%;
+            background: #ef4444;
+            transition: width 0.3s ease;
+          }
         </style>
 
-        <div style="max-width: 360px; margin: 0 auto 10px; display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+        <!-- VISUAL HEALTH BARS -->
+        <div style="max-width: 360px; margin: 0 auto 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--surface); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
           <div>
-            <div style="font-size: 12px; font-weight: 900; color: #a855f7;">${pName}</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">HP: ${curr.hp}% | Traps: ${curr.traps}</div>
+            <div style="font-size: 11px; font-weight: 900; color: #a855f7;">${pName}</div>
+            <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${curr.hp}%;"></div></div>
+            <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">HP: ${curr.hp}%</div>
           </div>
-          <div style="text-align: right;">
-            <div style="font-size: 12px; font-weight: 900; color: #f59e0b;">⚡ Points: ${ap}/3</div>
-            <div style="font-size: 10px; color: var(--text-muted);">Opponent HP: ${opp.hp}%</div>
+          <div>
+            <div style="font-size: 11px; font-weight: 900; color: #ef4444; text-align: right;">Enemy Target</div>
+            <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${opp.hp}%;"></div></div>
+            <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px; text-align: right;">HP: ${opp.hp}%</div>
           </div>
         </div>
 
@@ -198,15 +215,11 @@ window.OddoraGames["shadow-duel"] = {
         <div class="sh-controls">
           <button id="sh-act-sonar" class="sh-btn" ${ap < 1 ? "disabled" : ""}>📡 Scan Radar (1 AP)</button>
           <button id="sh-act-trap" class="sh-btn" ${ap < 1 || curr.traps < 1 ? "disabled" : ""}>💣 Plant Trap (1 AP)</button>
-          <button id="sh-act-shoot" class="sh-btn" style="grid-column: span 2; background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5;" ${ap < 2 ? "disabled" : ""}>🎯 Fire Cannon (2 AP)</button>
+          <button id="sh-act-shoot" class="sh-btn" style="grid-column: span 2; background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5;" ${ap < 2 ? "disabled" : ""}>🎯 Fire Cannon (-45 HP)</button>
         </div>
 
-        <div style="max-width: 360px; margin: 10px auto 0; font-size: 11px; color: #10b981; text-align: center; font-weight: 700;">
-          💡 Green highlighted tiles are valid move steps!
-        </div>
-
-        <div style="max-width: 360px; margin: 10px auto 0; background: #000; padding: 8px 12px; border-radius: 8px; font-size: 11px; color: #a3e635; font-family: monospace; height: 38px; overflow-y: auto;">
-          ${logs.slice(-1).join("<br>")}
+        <div style="max-width: 360px; margin: 10px auto 0; font-size: 11px; color: #a3e635; text-align: center; font-weight: 800;">
+          ⚡ Turn Points Left: ${ap}/3
         </div>
       `;
 
@@ -228,7 +241,7 @@ window.OddoraGames["shadow-duel"] = {
             curr.x = tx;
             curr.y = ty;
             ap--;
-            addLog(`Moved to [${tx + 1}, ${ty + 1}].`);
+            addLog(`Moved silently.`);
             checkTraps();
             checkTurnEnd();
           }
@@ -243,8 +256,7 @@ window.OddoraGames["shadow-duel"] = {
           const opp = activePlayer === 1 ? p2 : p1;
           const quadX = opp.x < 3 ? "West" : "East";
           const quadY = opp.y < 3 ? "North" : "South";
-          context.showToast(`Radar: Enemy detected in ${quadY}-${quadX}!`, "warning");
-          addLog(`Radar detected enemy in ${quadY}-${quadX}.`);
+          context.showToast(`Enemy detected in ${quadY}-${quadX}!`, "warning");
           checkTurnEnd();
         };
       }
@@ -256,8 +268,7 @@ window.OddoraGames["shadow-duel"] = {
           ap--;
           curr.traps--;
           traps.push({ x: curr.x, y: curr.y, owner: activePlayer });
-          context.showToast("Trap Planted!", "success");
-          addLog("Planted hidden trap.");
+          context.showToast("C4 Planted! Deals 35 Damage.", "success");
           checkTurnEnd();
         };
       }
@@ -274,11 +285,9 @@ window.OddoraGames["shadow-duel"] = {
 
           if (isHit) {
             opp.hp -= 45;
-            context.showToast("DIRECT HIT! 🎯 -45 HP", "success");
-            addLog("Direct hit! Dealt 45 damage.");
+            context.showToast("BOOM! Hit enemy for 45 damage! 🎯", "success");
           } else {
             context.showToast("Shot Missed!", "error");
-            addLog("Shot missed!");
           }
 
           if (opp.hp <= 0) {
@@ -298,8 +307,7 @@ window.OddoraGames["shadow-duel"] = {
       if (hitTrapIdx !== -1) {
         curr.hp -= 35;
         traps.splice(hitTrapIdx, 1);
-        context.showToast("BOOM! Stepped on Trap! 💣 -35 HP", "error");
-        addLog("BOOM! Stepped on trap!");
+        context.showToast("BOOM! Stepped on C4 Trap! -35 HP 💣", "error");
 
         if (curr.hp <= 0) endMatch();
       }
@@ -334,14 +342,12 @@ window.OddoraGames["shadow-duel"] = {
       if (Math.abs(p2.x - p1.x) <= 1 && Math.abs(p2.y - p1.y) <= 1 && ap >= 2) {
         p2.revealedTurns = 2;
         p1.hp -= 45;
-        context.showToast("AI Bot Sniped You! -45 HP", "error");
-        addLog("AI Bot sniped you!");
+        context.showToast("AI Bot Sniped You! -45 HP 🎯", "error");
       } else {
         const dx = Math.sign(p1.x - p2.x);
         const dy = Math.sign(p1.y - p2.y);
         if (dx !== 0 && Math.random() > 0.5) p2.x += dx;
         else if (dy !== 0) p2.y += dy;
-        addLog("AI Bot moved silently.");
       }
 
       checkTraps();
@@ -379,7 +385,7 @@ window.OddoraGames["shadow-duel"] = {
           <div style="font-size: 52px; margin-bottom: 12px;">🎉</div>
           <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 8px;">${winnerText}</h2>
           <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">
-            Final HP: ${p1.hp}% vs ${p2.hp}%
+            Target destroyed!
           </p>
           <button id="sh-rematch-btn" class="primary-button" style="width: 100%; padding: 12px;">Play Again 🔄</button>
         </div>
