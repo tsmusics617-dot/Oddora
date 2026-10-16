@@ -9,7 +9,7 @@ const ODDORA_CONFIG = {
   appName: "Oddora",
   storageKey: "oddora_app_v1",
   gameFolder: "games/",
-  defaultAvatar: "",
+  defaultAvatar: "👤",
   xpPerWin: 25,
   xpPerDraw: 10,
   xpPerLoss: 5
@@ -19,7 +19,7 @@ const GAME_REGISTRY = [
   {
     id: "tic-tac-toe",
     title: "Tic Tac Toe",
-    icon: "",
+    icon: "❌",
     description: "Challenge a friend or outsmart the computer in this classic duel.",
     category: "strategy",
     mode: "Pass and Play / AI",
@@ -32,7 +32,7 @@ const GAME_REGISTRY = [
   {
     id: "reflex-duel",
     title: "Reflex Duel",
-    icon: "",
+    icon: "⚡",
     description: "Test your reaction speed and beat your opponent.",
     category: "reflex",
     mode: "Reaction challenge",
@@ -45,7 +45,7 @@ const GAME_REGISTRY = [
   {
     id: "memory-match",
     title: "Memory Match",
-    icon: "",
+    icon: "🧠",
     description: "Remember the card patterns and find matching pairs.",
     category: "puzzle",
     mode: "Memory challenge",
@@ -54,6 +54,19 @@ const GAME_REGISTRY = [
     difficulty: "Medium",
     color: "purple",
     file: "memory-match.js"
+  },
+  {
+    id: "shadow-duel",
+    title: "Shadow Hunt",
+    icon: "🥷",
+    description: "Stealth 2D combat arena with Fog of War, C4 traps, and sonar radar.",
+    category: "strategy",
+    mode: "Pass and Play / AI",
+    players: "1 to 2 players",
+    xp: 35,
+    difficulty: "Hard",
+    color: "purple",
+    file: "shadow-duel.js"
   }
 ];
 
@@ -104,7 +117,7 @@ function saveAppState() {
 }
 
 /* DOM HELPERS */
-function $(selector) { return document.querySelector(selector); }  function $$(selector) {
+function $(selector) { return document.querySelector(selector); } function $$(selector) {
   return Array.from(document.querySelectorAll(selector));
 }
 
@@ -133,7 +146,7 @@ function showToast(msg, type = "success") {
   setTimeout(() => toast.remove(), 2500);
 }
 
-function openModal({ title = "Oddora", icon = "", content = "", confirmText = "Got It" } = {}) {
+function openModal({ title = "Oddora", icon = "🎮", content = "", confirmText = "Got It" } = {}) {
   const overlay = $("#modal-overlay");
   if (!overlay) return;
   setText("#modal-icon", icon);
@@ -197,8 +210,8 @@ function setupNavigation() {
 
   $("#feedback-button")?.addEventListener("click", () => {
     openModal({
-      title: " Beta Feedback",
-      icon: "",
+      title: "💬 Beta Feedback",
+      icon: "🎮",
       content: `
         <p style="margin-bottom: 12px; font-size: 13px; color: var(--text-secondary);">
           Which game is your favorite so far?
@@ -206,12 +219,12 @@ function setupNavigation() {
         <textarea id="feedback-text" rows="3" style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 12px;" placeholder="Tell us what you think..."></textarea>
       `,
       confirmText: "Submit",
-      onConfirm: () => showToast("Feedback saved! ")
+      onConfirm: () => showToast("Feedback saved! 🔥")
     });
   });
 
   $("#sidebar-play-button")?.addEventListener("click", () => {
-    const text = encodeURIComponent(" Play Oddora mini-games with me! Think you can beat my high score?");
+    const text = encodeURIComponent("🎮 Play Oddora mini-games with me! Think you can beat my high score?");
     window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
   });
 }
@@ -357,8 +370,8 @@ function createGameCard(game) {
     <h3 class="game-card-title">${game.title}</h3>
     <p class="game-card-description">${game.description}</p>
     <div class="game-card-footer">
-      <div class="game-card-meta"> ${game.players} •  ${game.xp} XP</div>
-      <div class="game-card-play"></div>
+      <div class="game-card-meta">👥 ${game.players} • ⚡ ${game.xp} XP</div>
+      <div class="game-card-play">▶</div>
     </div>
   `;
 
