@@ -1,276 +1,223 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#07080f">
-    <meta name="description" content="Oddora - Play beyond ordinary casual mini games.">
-    <title>Oddora Arcade</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Oddora — Modern Web Arcade</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <div id="app">
-
-        <!-- Mobile Sidebar Backdrop -->
-        <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
-
-        <!-- Sidebar Navigation -->
-        <aside id="sidebar">
-            <div class="brand">
-                <div class="brand-icon">O</div>
-                <div class="brand-text">
-                    <h1>ODDORA</h1>
-                    <span>PLAY BEYOND ORDINARY</span>
-                </div>
-            </div>
-
-            <nav class="main-navigation">
-                <button class="nav-item active" data-page="home">
-                    <span class="nav-icon"></span>
-                    <span>Home</span>
-                </button>
-                <button class="nav-item" data-page="games">
-                    <span class="nav-icon"></span>
-                    <span>All Games</span>
-                </button>
-                <button class="nav-item" data-page="leaderboard">
-                    <span class="nav-icon"></span>
-                    <span>Leaderboard</span>
-                </button>
-                <button class="nav-item" data-page="profile">
-                    <span class="nav-icon"></span>
-                    <span>My Profile</span>
-                </button>
-            </nav>
-
-            <div class="sidebar-bottom">
-                <div class="sidebar-promo">
-                    <div class="promo-icon"></div>
-                    <h3>Ready for a duel?</h3>
-                    <p>Challenge someone on WhatsApp!</p>
-                    <button id="sidebar-play-button" class="primary-button" type="button">
-                        Challenge Friend
-                    </button>
-                </div>
-                <div class="sidebar-footer">
-                    <span class="online-dot"></span>
-                    <span>Oddora Arcade</span>
-                    <span class="version-label">V1.0</span>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content View -->
-        <main class="main-content">
-
-            <!-- Topbar -->
-            <header class="topbar">
-                <div class="topbar-left">
-                    <button class="icon-button mobile-menu-button" id="mobile-menu-button" type="button">
-                        
-                    </button>
-                    <div class="breadcrumb">
-                        <span>Oddora</span> / <strong id="breadcrumb-current">Home</strong>
-                    </div>
-                </div>
-
-                <div class="topbar-right">
-                    <div class="profile-shortcut" data-page="profile">
-                        <div class="avatar" id="topbar-avatar"></div>
-                        <div class="profile-shortcut-text">
-                            <strong id="topbar-username">Player One</strong>
-                            <span>Player</span>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Page Container -->
-            <div class="page-container">
-
-                <!-- HOME PAGE -->
-                <section class="page active" id="page-home">
-                    <div class="welcome-section">
-                        <div>
-                            <p class="eyebrow">YOUR NEXT FAVORITE GAME</p>
-                            <h2>Welcome back, <span id="welcome-username">Player One</span> </h2>
-                            <p class="section-description">Pick a game and test your skills.</p>
-                        </div>
-                    </div>
-
-                    <!-- Hero Banner -->
-                    <section class="hero-banner">
-                        <div class="hero-content">
-                            <div class="hero-badge">
-                                <span class="hero-badge-dot"></span> THE ARCADE IS OPEN
-                            </div>
-                            <h2>Small games.<br><span>Big rivalries.</span></h2>
-                            <p>From quick reflex challenges to strategic duels.</p>
-                            <button class="primary-button hero-button" id="hero-play-button" type="button">
-                                Explore Games 
-                            </button>
-                        </div>
-                        <div class="hero-art">
-                            <div class="art-circle art-circle-one"></div>
-                            <div class="art-circle art-circle-two"></div>
-                            <div class="hero-controller"></div>
-                        </div>
-                    </section>
-
-                    <!-- Stats Grid -->
-                    <section class="stats-grid">
-                        <article class="stat-card">
-                            <div class="stat-icon purple"></div>
-                            <div>
-                                <span class="stat-label">Games Played</span>
-                                <strong id="stat-games-played">0</strong>
-                            </div>
-                        </article>
-
-                        <article class="stat-card">
-                            <div class="stat-icon green"></div>
-                            <div>
-                                <span class="stat-label">Wins</span>
-                                <strong id="stat-wins">0</strong>
-                            </div>
-                        </article>
-
-                        <article class="stat-card">
-                            <div class="stat-icon orange"></div>
-                            <div>
-                                <span class="stat-label">Win Rate</span>
-                                <strong id="stat-win-rate">0%</strong>
-                            </div>
-                        </article>
-
-                        <article class="stat-card">
-                            <div class="stat-icon blue"></div>
-                            <div>
-                                <span class="stat-label">XP Earned</span>
-                                <strong id="stat-xp">0</strong>
-                            </div>
-                        </article>
-                    </section>
-
-                    <!-- Featured Games -->
-                    <section class="content-section">
-                        <div class="section-heading">
-                            <div>
-                                <p class="eyebrow">PICK YOUR CHALLENGE</p>
-                                <h2>Featured Games</h2>
-                            </div>
-                            <button class="text-button" data-page="games" type="button">View all games </button>
-                        </div>
-                        <div class="games-grid" id="featured-games-grid"></div>
-                    </section>
-                </section>
-
-                <!-- ALL GAMES PAGE -->
-                <section class="page" id="page-games">
-                    <div class="welcome-section">
-                        <div>
-                            <p class="eyebrow">THE COMPLETE COLLECTION</p>
-                            <h2>All Games</h2>
-                            <p class="section-description">Find your favorite challenge and start playing.</p>
-                        </div>
-                    </div>
-
-                    <div class="game-toolbar">
-                        <input type="search" id="game-search" placeholder="Search games..." autocomplete="off">
-                    </div>
-
-                    <div class="category-filters" id="category-filters">
-                        <button class="category-button active" data-category="all" type="button">All Games</button>
-                        <button class="category-button" data-category="strategy" type="button">Strategy</button>
-                        <button class="category-button" data-category="reflex" type="button">Reflex</button>
-                        <button class="category-button" data-category="puzzle" type="button">Puzzle</button>
-                    </div>
-
-                    <div class="games-grid" id="all-games-grid"></div>
-                </section>
-
-                <!-- GAME ARENA SCREEN -->
-                <section class="page" id="page-game">
-                    <div style="margin-bottom: 16px;">
-                        <button class="text-button" id="back-to-games" type="button"> Back to Games</button>
-                    </div>
-
-                    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
-                        <div class="game-screen-dp banner-purple" id="current-game-icon"></div>
-                        <div>
-                            <h2 id="current-game-title" style="font-size: 22px; font-weight: 850;">Game Title</h2>
-                            <p id="current-game-description" style="font-size: 12px; color: var(--text-secondary);">Game description</p>
-                        </div>
-                    </div>
-
-                    <div class="card" style="padding: 16px; margin-bottom: 20px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span id="game-status-text" style="font-size: 12px; font-weight: 700; color: var(--primary-light);">Ready</span>
-                            <button class="icon-button" id="restart-game-button" type="button" title="Restart Game"></button>
-                        </div>
-                    </div>
-
-                    <div id="game-root" style="min-height: 300px;"></div>
-                </section>
-
-                <!-- PROFILE PAGE -->
-                <section class="page" id="page-profile">
-                    <div class="welcome-section">
-                        <div>
-                            <p class="eyebrow">YOUR GAMING IDENTITY</p>
-                            <h2>My Profile</h2>
-                        </div>
-                    </div>
-
-                    <div class="card" style="margin-bottom: 24px; text-align: center; padding: 30px;">
-                        <div class="avatar" style="width: 60px; height: 60px; font-size: 30px; margin: 0 auto 12px;"></div>
-                        <h3 id="profile-display-name" style="font-size: 20px;">Player One</h3>
-                        <p id="profile-handle" style="color: var(--text-muted); font-size: 12px;">@playerone</p>
-                        <div style="margin-top: 14px; display: inline-block; padding: 6px 14px; background: rgba(124, 58, 237, 0.2); border-radius: 20px; color: #c084fc; font-weight: 800; font-size: 12px;">
-                            LEVEL <span id="profile-level">1</span>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- LEADERBOARD PAGE -->
-                <section class="page" id="page-leaderboard">
-                    <div class="welcome-section">
-                        <div>
-                            <p class="eyebrow">THE BEST OF THE ARCADE</p>
-                            <h2>Leaderboard</h2>
-                        </div>
-                    </div>
-                    <div class="card" style="padding: 24px; text-align: center;">
-                        <p style="color: var(--text-secondary);">Local prototype leaderboard. Win games to earn XP!</p>
-                    </div>
-                </section>
-
-            </div>
-
-            <!-- Floating Feedback Button -->
-            <button class="feedback-float-btn" id="feedback-button" type="button" title="Send Feedback">
-                
-            </button>
-
-            <!-- Modal Overlay -->
-            <div class="modal-overlay hidden" id="modal-overlay">
-                <div class="modal-card">
-                    <button class="modal-close" id="modal-close" type="button">&times;</button>
-                    <div class="modal-icon" id="modal-icon"></div>
-                    <h2 id="modal-title">Notification</h2>
-                    <div id="modal-content"></div>
-                    <button class="primary-button modal-confirm" id="modal-confirm" type="button">Got It</button>
-                </div>
-            </div>
-
-            <!-- Toast Container -->
-            <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 3000;"></div>
-
-        </main>
+  <!-- TOP APP HEADER -->
+  <header class="app-header">
+    <div class="header-left">
+      <button id="nav-drawer-btn" class="icon-pill-btn">☰</button>
+      <div class="breadcrumb">
+        <span>Oddora /</span>
+        <strong id="current-page-title">Home</strong>
+      </div>
     </div>
 
-    <!-- Application Engine -->
-    <script src="app.js"></script>
+    <div class="header-right">
+      <button id="theme-toggle-btn" class="theme-pill-btn">🌙</button>
+      <div class="user-profile-card">
+        <div class="profile-avatar-icon">👤</div>
+        <div class="profile-meta">
+          <strong id="header-username">Player One</strong>
+          <span id="header-user-role">Player</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION DRAWER / SIDEBAR MODAL -->
+  <div id="drawer-overlay" class="drawer-overlay hidden">
+    <div class="drawer-content">
+      <div class="drawer-header">
+        <h2>🎮 Oddora Menu</h2>
+        <button id="drawer-close-btn" class="icon-pill-btn">✕</button>
+      </div>
+      <nav class="drawer-nav">
+        <button class="drawer-link active" data-page="home">🏠 Home</button>
+        <button class="drawer-link" data-page="games">🎯 All Games</button>
+        <button class="drawer-link" data-page="profile">🏆 Profile & Stats</button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- MAIN VIEW CONTAINER -->
+  <main class="main-viewport">
+
+    <!-- PAGE 1: HOME SCREEN -->
+    <section id="page-home" class="view-page active">
+      <div class="welcome-section">
+        <span class="sub-heading">YOUR NEXT FAVORITE GAME</span>
+        <h1>Welcome back, <span id="home-username">Player One</span> 👋</h1>
+        <p>Pick a game and test your skills.</p>
+      </div>
+
+      <!-- DAILY STREAK BANNER -->
+      <div class="streak-banner-card">
+        <div>
+          <span class="streak-tag">DAILY LOGIN STREAK</span>
+          <h3>Day 1 Streak Active!</h3>
+        </div>
+        <div class="xp-badge-claim">+50 XP Claimed</div>
+      </div>
+
+      <!-- HERO ARCADE CARD -->
+      <div class="hero-arcade-box">
+        <span class="arcade-status-pill">• THE ARCADE IS OPEN</span>
+        <h2>Small games.<br><span class="gradient-text">Big rivalries.</span></h2>
+        <p>From quick reflex challenges to strategic duels.</p>
+        
+        <button id="explore-games-btn" class="primary-gradient-btn">
+          Explore Games 🚀
+        </button>
+
+        <div class="floating-controller-wrapper">
+          <div class="controller-icon-box">🎮</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 2: ALL GAMES CATALOG -->
+    <section id="page-games" class="view-page hidden">
+      <div class="catalog-header">
+        <span class="sub-heading">THE COMPLETE COLLECTION</span>
+        <h1>All Games</h1>
+        <p>Find your favorite challenge and start playing.</p>
+      </div>
+
+      <!-- SEARCH & FILTER CONTROLS -->
+      <div class="search-box-wrapper">
+        <input type="text" id="game-search-input" placeholder="Search games...">
+      </div>
+
+      <div class="filter-pills-row">
+        <button class="filter-btn active" data-category="all">All Games</button>
+        <button class="filter-btn" data-category="strategy">Strategy</button>
+        <button class="filter-btn" data-category="reflex">Reflex</button>
+        <button class="filter-btn" data-category="puzzle">Puzzle</button>
+      </div>
+
+      <!-- GAME CARDS STACK WITH DESIGNER LOGO BANNERS -->
+      <div id="catalog-cards-container" class="game-cards-stack">
+        
+        <!-- CARD 1: TIC TAC TOE -->
+        <div class="game-catalog-card">
+          <div class="game-card-banner banner-cyan">
+            <div class="logo-badge-container">
+              <span class="logo-emoji">❌⭕</span>
+              <span class="logo-subtext">TIC TAC TOE</span>
+            </div>
+            <span class="difficulty-badge">Easy</span>
+          </div>
+          <h3>Tic Tac Toe</h3>
+          <p>Challenge a friend or outsmart the computer in this classic duel.</p>
+          <div class="game-card-footer">
+            <span class="game-meta-text">1 to 2 players ◈ 25 XP</span>
+            <button class="play-square-btn launch-game-trigger" data-id="tic-tac-toe">▶</button>
+          </div>
+        </div>
+
+        <!-- CARD 2: REFLEX DUEL -->
+        <div class="game-catalog-card">
+          <div class="game-card-banner banner-amber">
+            <div class="logo-badge-container">
+              <span class="logo-emoji">⚡</span>
+              <span class="logo-subtext">REFLEX DUEL</span>
+            </div>
+            <span class="difficulty-badge">Easy</span>
+          </div>
+          <h3>Reflex Duel</h3>
+          <p>Test your reaction speed and beat your opponent.</p>
+          <div class="game-card-footer">
+            <span class="game-meta-text">1 to 2 players ◈ 25 XP</span>
+            <button class="play-square-btn launch-game-trigger" data-id="reflex-duel">▶</button>
+          </div>
+        </div>
+
+        <!-- CARD 3: MEMORY MATCH -->
+        <div class="game-catalog-card">
+          <div class="game-card-banner banner-emerald">
+            <div class="logo-badge-container">
+              <span class="logo-emoji">🧠</span>
+              <span class="logo-subtext">MEMORY MATCH</span>
+            </div>
+            <span class="difficulty-badge">Medium</span>
+          </div>
+          <h3>Memory Match</h3>
+          <p>Remember the card patterns and find matching pairs.</p>
+          <div class="game-card-footer">
+            <span class="game-meta-text">1 to 2 players ◈ 25 XP</span>
+            <button class="play-square-btn launch-game-trigger" data-id="memory-match">▶</button>
+          </div>
+        </div>
+
+        <!-- CARD 4: SHADOW HUNT -->
+        <div class="game-catalog-card">
+          <div class="game-card-banner banner-purple">
+            <div class="logo-badge-container">
+              <span class="logo-emoji">🥷</span>
+              <span class="logo-subtext">SHADOW HUNT</span>
+            </div>
+            <span class="difficulty-badge">Hard</span>
+          </div>
+          <h3>Shadow Hunt</h3>
+          <p>Stealth 2D combat arena with Fog of War, C4 traps, and sonar radar.</p>
+          <div class="game-card-footer">
+            <span class="game-meta-text">1 to 2 players ◈ 35 XP</span>
+            <button class="play-square-btn launch-game-trigger" data-id="shadow-duel">▶</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PAGE 3: ACTIVE GAME SCREEN -->
+    <section id="page-game-arena" class="view-page hidden">
+      <div class="arena-header-bar">
+        <div>
+          <span class="sub-heading">MATCH IN PROGRESS</span>
+          <h2 id="arena-game-name">Shadow Hunt</h2>
+        </div>
+        <button id="exit-arena-btn" class="secondary-pill-btn">Exit Arena ⬅</button>
+      </div>
+
+      <div id="arena-root-canvas" class="arena-root-canvas">
+        <!-- Game engine embeds here -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ONLINE MULTIPLAYER ROOM MODAL -->
+  <div id="online-modal-overlay" class="drawer-overlay hidden">
+    <div class="drawer-content" style="width: 320px; margin: auto; height: auto; border-radius: 20px; padding: 24px;">
+      <div class="drawer-header">
+        <h2>🌐 Online Room</h2>
+        <button id="online-modal-close" class="icon-pill-btn">✕</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+        <button id="create-room-btn" class="primary-gradient-btn">Create Room Code 🔑</button>
+        <div style="text-align: center; color: var(--text-muted); font-size: 12px;">— OR —</div>
+        <input type="text" id="room-code-input" placeholder="Enter 6-Digit Code" maxlength="6" style="padding: 12px; border-radius: 12px; background: var(--card-bg); border: 1px solid var(--card-border); color: white; text-align: center; font-weight: 800; letter-spacing: 2px;">
+        <button id="join-room-btn" class="secondary-pill-btn" style="padding: 12px;">Join Room 🚀</button>
+        <p id="room-status-display" style="font-size: 11px; color: var(--cyan-accent); margin-top: 8px; text-align: center;"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING CHAT BUTTON -->
+  <button class="floating-chat-btn">💬</button>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- FIREBASE & MULTIPLAYER LIBRARIES -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="multiplayer.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -1,421 +1,198 @@
 /* =========================================================
-   ODDORA — MAIN ENGINE (CLEAN V2)
+   ODDORA � CLEAN MODERN APPLICATION ENGINE WITH COVER ICONS
    File: app.js
    ========================================================= */
 
 "use strict";
 
-const ODDORA_CONFIG = {
-  appName: "Oddora",
-  storageKey: "oddora_app_v1",
-  gameFolder: "games/",
-  defaultAvatar: "👤",
-  xpPerWin: 25,
-  xpPerDraw: 10,
-  xpPerLoss: 5
-};
-
-const GAME_REGISTRY = [
+const GAME_CATALOG = [
   {
     id: "tic-tac-toe",
     title: "Tic Tac Toe",
-    icon: "❌",
+    icon: "",
     description: "Challenge a friend or outsmart the computer in this classic duel.",
     category: "strategy",
-    mode: "Pass and Play / AI",
+    difficulty: "Easy",
+    bannerClass: "banner-purple",
     players: "1 to 2 players",
     xp: 25,
-    difficulty: "Easy",
-    color: "purple",
     file: "tic-tac-toe.js"
   },
   {
     id: "reflex-duel",
     title: "Reflex Duel",
-    icon: "⚡",
+    icon: "",
     description: "Test your reaction speed and beat your opponent.",
     category: "reflex",
-    mode: "Reaction challenge",
+    difficulty: "Easy",
+    bannerClass: "banner-amber",
     players: "1 to 2 players",
     xp: 25,
-    difficulty: "Easy",
-    color: "yellow",
     file: "reflex-duel.js"
   },
   {
     id: "memory-match",
     title: "Memory Match",
-    icon: "🧠",
+    icon: "",
     description: "Remember the card patterns and find matching pairs.",
     category: "puzzle",
-    mode: "Memory challenge",
+    difficulty: "Medium",
+    bannerClass: "banner-purple",
     players: "1 to 2 players",
     xp: 25,
-    difficulty: "Medium",
-    color: "purple",
     file: "memory-match.js"
   },
   {
     id: "shadow-duel",
     title: "Shadow Hunt",
-    icon: "🥷",
+    icon: "",
     description: "Stealth 2D combat arena with Fog of War, C4 traps, and sonar radar.",
     category: "strategy",
-    mode: "Pass and Play / AI",
+    difficulty: "Hard",
+    bannerClass: "banner-purple",
     players: "1 to 2 players",
     xp: 35,
-    difficulty: "Hard",
-    color: "purple",
     file: "shadow-duel.js"
   }
 ];
 
-/* STATE MANAGEMENT */
-function createDefaultState() {
-  return {
-    version: 1,
-    profile: {
-      name: "Player One",
-      avatar: ODDORA_CONFIG.defaultAvatar,
-      handle: "@playerone"
-    },
-    stats: {
-      gamesPlayed: 0,
-      wins: 0,
-      draws: 0,
-      losses: 0,
-      xp: 0
-    },
-    gameStats: {}
-  };
-}
+let appState = {
+  theme: "dark",
+  username: "Player One",
+  currentPage: "home",
+  selectedCategory: "all"
+};
 
-function loadAppState() {
-  const defaults = createDefaultState();
-  try {
-    const raw = localStorage.getItem(ODDORA_CONFIG.storageKey);
-    if (!raw) return defaults;
-    const saved = JSON.parse(raw);
-    return {
-      ...defaults,
-      ...saved,
-      profile: { ...defaults.profile, ...(saved.profile || {}) },
-      stats: { ...defaults.stats, ...(saved.stats || {}) },
-      gameStats: saved.gameStats || {}
-    };
-  } catch (e) {
-    return defaults;
-  }
-}
+function $(selector) { return document.querySelector(selector); } function $$(selector) { return Array.from(document.querySelectorAll(selector)); }
+function setText(selector, val) { const el = $(selector); if (el) el.textContent = String(val ?? ""); }  /* ROUTING & NAVIGATION */ function navigateTo(pageId, pageTitle = "Home") { appState.currentPage = pageId; setText("#current-page-title", pageTitle);    $$(".view-page").forEach(p => p.classList.add("hidden"));
+  $(`#page-${pageId}`)?.classList.remove("hidden");
 
-let appState = loadAppState();
-
-function saveAppState() {
-  try {
-    localStorage.setItem(ODDORA_CONFIG.storageKey, JSON.stringify(appState));
-  } catch (e) {}
-}
-
-/* DOM HELPERS */
-function $(selector) { return document.querySelector(selector); } function $$(selector) {
-  return Array.from(document.querySelectorAll(selector));
-}
-
-function setText(selector, val) {
-  const el = $(selector);
-  if (el) el.textContent = String(val ?? "");
-}
-
-function getWinRate() {
-  if (appState.stats.gamesPlayed <= 0) return 0;
-  return Math.round((appState.stats.wins / appState.stats.gamesPlayed) * 100);
-}
-
-function getLevelFromXP(xp) {
-  return Math.floor((Number(xp) || 0) / 100) + 1;
-}
-
-function showToast(msg, type = "success") {
-  const container = $("#toast-container");
-  if (!container) return;
-  const toast = document.createElement("div");
-  toast.className = `toast ${type}`;
-  toast.style.cssText = "background: #141824; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 10px 16px; border-radius: 10px; margin-bottom: 8px; font-size: 12px; font-weight: 700;";
-  toast.textContent = msg;
-  container.appendChild(toast);
-  setTimeout(() => toast.remove(), 2500);
-}
-
-function openModal({ title = "Oddora", icon = "🎮", content = "", confirmText = "Got It" } = {}) {
-  const overlay = $("#modal-overlay");
-  if (!overlay) return;
-  setText("#modal-icon", icon);
-  setText("#modal-title", title);
-  const contentEl = $("#modal-content");
-  if (contentEl) contentEl.innerHTML = content;
-  setText("#modal-confirm", confirmText);
-  overlay.classList.remove("hidden");
-  overlay.classList.add("active");
-}
-
-function closeModal() {
-  const overlay = $("#modal-overlay");
-  if (!overlay) return;
-  overlay.classList.remove("active");
-  overlay.classList.add("hidden");
-}
-
-/* ROUTING & PAGE SWITCHING */
-let currentPage = "home";
-let currentGameId = null;
-let currentGameInstance = null;
-
-function navigateTo(pageName) {
-  const target = $(`#page-${pageName}`);
-  if (!target) return;
-
-  if (currentPage === "game" && pageName !== "game") {
-    stopCurrentGame();
-  }
-
-  $$(".page").forEach(page => page.classList.toggle("active", page.id === `page-${pageName}`));
-  $$("[data-page]").forEach(btn => btn.classList.toggle("active", btn.dataset.page === pageName));
-
-  currentPage = pageName;
-  setText("#breadcrumb-current", pageName.charAt(0).toUpperCase() + pageName.slice(1));
-
-  closeSidebar();
-
-  if (pageName === "home") renderHomePage();
-  if (pageName === "games") renderGamesCatalog();
-  if (pageName === "profile") renderProfilePage();
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  $("#drawer-overlay")?.classList.add("hidden");
 }
 
 function setupNavigation() {
-  document.addEventListener("click", e => {
-    const navBtn = e.target.closest("[data-page]");
-    if (navBtn) {
-      e.preventDefault();
-      const page = navBtn.dataset.page;
-      if (page) navigateTo(page);
-    }
+  $("#nav-drawer-btn")?.addEventListener("click", () => {
+    $("#drawer-overlay")?.classList.remove("hidden");
   });
 
-  $("#back-to-games")?.addEventListener("click", () => navigateTo("games"));
-  $("#hero-play-button")?.addEventListener("click", () => navigateTo("games"));
-  $("#modal-close")?.addEventListener("click", closeModal);
-  $("#modal-confirm")?.addEventListener("click", closeModal);
+  $("#drawer-close-btn")?.addEventListener("click", () => {
+    $("#drawer-overlay")?.classList.add("hidden");
+  });
 
-  $("#feedback-button")?.addEventListener("click", () => {
-    openModal({
-      title: "💬 Beta Feedback",
-      icon: "🎮",
-      content: `
-        <p style="margin-bottom: 12px; font-size: 13px; color: var(--text-secondary);">
-          Which game is your favorite so far?
-        </p>
-        <textarea id="feedback-text" rows="3" style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 12px;" placeholder="Tell us what you think..."></textarea>
-      `,
-      confirmText: "Submit",
-      onConfirm: () => showToast("Feedback saved! 🔥")
+  $$(".drawer-link").forEach(link => { link.addEventListener("click", () => { $$
+(".drawer-link").forEach(l => l.classList.remove("active"));
+      link.classList.add("active");
+      const target = link.dataset.page;
+      navigateTo(target, target === "home" ? "Home" : "Games");
     });
   });
 
-  $("#sidebar-play-button")?.addEventListener("click", () => {
-    const text = encodeURIComponent("🎮 Play Oddora mini-games with me! Think you can beat my high score?");
-    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+  $("#explore-games-btn")?.addEventListener("click", () => {
+    navigateTo("games", "Games");
+  });
+
+  $("#theme-toggle-btn")?.addEventListener("click", () => {
+    appState.theme = appState.theme === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", appState.theme);
   });
 }
 
-/* SIDEBAR DRAWER */
-function openSidebar() {
-  $("#sidebar")?.classList.add("open");
-  $("#sidebar-backdrop")?.classList.add("active");
-}
+/* CATALOG RENDERER WITH BANNER ICONS */
+function renderCatalogCards() {
+  const container = $("#catalog-cards-container");
+  if (!container) return;
+  container.replaceChildren();
 
-function closeSidebar() {
-  $("#sidebar")?.classList.remove("open");
-  $("#sidebar-backdrop")?.classList.remove("active");
-}
-
-function setupSidebar() {
-  $("#mobile-menu-button")?.addEventListener("click", e => {
-    e.stopPropagation();
-    const sidebar = $("#sidebar");
-    if (sidebar?.classList.contains("open")) closeSidebar();
-    else openSidebar();
+  const filtered = GAME_CATALOG.filter(game => {
+    if (appState.selectedCategory === "all") return true;
+    return game.category === appState.selectedCategory;
   });
 
-  $("#sidebar-backdrop")?.addEventListener("click", closeSidebar);
+  filtered.forEach(game => {
+    const card = document.createElement("div");
+    card.className = "game-catalog-card";
+    card.innerHTML = `
+      <div class="game-card-banner ${game.bannerClass}">
+        <div class="banner-cover-art">${game.icon}</div>
+        <span class="difficulty-badge">${game.difficulty}</span>
+      </div>
+      <h3>${game.title}</h3>
+      <p>${game.description}</p>
+      <div class="game-card-footer">
+        <span class="game-meta-text">${game.players}  ${game.xp} XP</span>
+        <button class="play-square-btn launch-game-trigger" data-id="${game.id}"></button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  $$(".launch-game-trigger").forEach(btn => {
+    btn.onclick = () => launchGameArena(btn.dataset.id);
+  });
 }
 
-/* GAME LOADER & RECORDING */
-function getGameStats(gameId) {
-  if (!appState.gameStats[gameId]) {
-    appState.gameStats[gameId] = { played: 0, wins: 0, xp: 0 };
-  }
-  return appState.gameStats[gameId];
+function setupFilters() {
+  $$(".filter-btn").forEach(btn => { btn.onclick = () => { $$
+(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      appState.selectedCategory = btn.dataset.category;
+      renderCatalogCards();
+    };
+  });
 }
 
-function recordResult(gameId, result) {
-  const gStats = getGameStats(gameId);
-  appState.stats.gamesPlayed += 1;
-  gStats.played += 1;
+/* GAME ARENA LAUNCHER */
+let currentGameInstance = null;
 
-  let xpEarned = ODDORA_CONFIG.xpPerLoss;
-  if (result === "win") {
-    appState.stats.wins += 1;
-    gStats.wins += 1;
-    xpEarned = ODDORA_CONFIG.xpPerWin;
-  }
+function launchGameArena(gameId) {
+  const game = GAME_CATALOG.find(g => g.id === gameId);
+  if (!game) return;
 
-  appState.stats.xp += xpEarned;
-  saveAppState();
-  renderHomePage();
+  setText("#arena-game-name", game.title);
+  navigateTo("game-arena", "Game");
 
-  return { result, xpEarned };
+  const root = $("#arena-root-canvas");
+  if (root) root.innerHTML = `<div style="text-align:center; padding: 20px;">Loading Arena Engine...</div>`;
+
+  loadGameScript(game).then(module => {
+    if (!module) return;
+
+    const context = {
+      game,
+      root: root,
+      mode: "p2",
+      getPlayerName: () => appState.username,
+      showToast: (msg) => { alert(msg); },
+      recordResult: () => {}
+    };
+
+    currentGameInstance = module.init(context);
+  });
 }
-
-const loadedScripts = new Set();
 
 function loadGameScript(game) {
-  if (loadedScripts.has(game.id)) {
-    return Promise.resolve(window.OddoraGames?.[game.id]);
+  if (window.OddoraGames?.[game.id]) {
+    return Promise.resolve(window.OddoraGames[game.id]);
   }
-
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
-    // Using relative path explicitly so GitHub Pages subdirectories work:
     script.src = `./games/${game.file}`;
-    
-    script.onload = () => {
-      loadedScripts.add(game.id);
-      const module = window.OddoraGames?.[game.id];
-      if (module) resolve(module);
-      else reject(new Error("Module load failed"));
-    };
-    
-    script.onerror = () => reject(new Error("Script file missing at " + script.src));
+    script.onload = () => resolve(window.OddoraGames?.[game.id]);
+    script.onerror = () => reject(new Error("Script error"));
     document.body.appendChild(script);
   });
 }
 
-async function openGame(gameId) {
-  const game = GAME_REGISTRY.find(g => g.id === gameId);
-  if (!game) return;
-
-  stopCurrentGame();
-  currentGameId = gameId;
-
-  const gameIconEl = $("#current-game-icon");
-  if (gameIconEl) {
-    gameIconEl.textContent = game.icon;
-    gameIconEl.className = `game-screen-dp banner-${game.color || 'purple'}`;
-  }
-
-  setText("#current-game-title", game.title);
-  setText("#current-game-description", game.description);
-  setText("#game-status-text", "Loading game...");
-
-  const gameRoot = $("#game-root");
-  if (gameRoot) gameRoot.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">Loading arena...</div>`;
-
-  navigateTo("game");
-
-  try {
-    const module = await loadGameScript(game);
-    if (currentPage !== "game" || currentGameId !== gameId) return;
-
-    const context = {
-      game,
-      root: gameRoot,
-      state: appState,
-      stats: getGameStats(gameId),
-      recordResult: (res) => recordResult(gameId, res),
-      updateStatus: msg => setText("#game-status-text", msg),
-      getPlayerName: () => appState.profile.name,
-      showToast
-    };
-
-    currentGameInstance = await module.init(context);
-    setText("#game-status-text", "Game Ready");
-  } catch (err) {
-    if (gameRoot) {
-      gameRoot.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--danger);">Failed to load game module.</div>`;
-    }
-  }
-}
-
-function stopCurrentGame() {
+$("#exit-arena-btn")?.addEventListener("click", () => {
   if (currentGameInstance && typeof currentGameInstance.destroy === "function") {
     try { currentGameInstance.destroy(); } catch (e) {}
   }
   currentGameInstance = null;
-  currentGameId = null;
-}
-
-/* RENDERING CARDS */
-function createGameCard(game) {
-  const card = document.createElement("article");
-  card.className = "game-card";
-  const colorClass = game.color ? `banner-${game.color}` : "banner-purple";
-
-  card.innerHTML = `
-    <div class="game-card-banner ${colorClass}">
-      <span class="cover-icon">${game.icon}</span>
-      <span class="banner-tag">${game.difficulty}</span>
-    </div>
-    <h3 class="game-card-title">${game.title}</h3>
-    <p class="game-card-description">${game.description}</p>
-    <div class="game-card-footer">
-      <div class="game-card-meta">👥 ${game.players} • ⚡ ${game.xp} XP</div>
-      <div class="game-card-play">▶</div>
-    </div>
-  `;
-
-  card.addEventListener("click", () => openGame(game.id));
-  return card;
-}
-
-function renderHomePage() {
-  setText("#welcome-username", appState.profile.name);
-  setText("#stat-games-played", appState.stats.gamesPlayed);
-  setText("#stat-wins", appState.stats.wins);
-  setText("#stat-win-rate", `${getWinRate()}%`);
-  setText("#stat-xp", appState.stats.xp);
-  setText("#topbar-username", appState.profile.name);
-
-  const grid = $("#featured-games-grid");
-  if (grid) {
-    grid.replaceChildren();
-    GAME_REGISTRY.forEach(g => grid.appendChild(createGameCard(g)));
-  }
-}
-
-function renderGamesCatalog() {
-  const grid = $("#all-games-grid");
-  if (grid) {
-    grid.replaceChildren();
-    GAME_REGISTRY.forEach(g => grid.appendChild(createGameCard(g)));
-  }
-}
-
-function renderProfilePage() {
-  setText("#profile-display-name", appState.profile.name);
-  setText("#profile-handle", appState.profile.handle);
-  setText("#profile-level", getLevelFromXP(appState.stats.xp));
-}
+  navigateTo("games", "Games");
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   setupNavigation();
-  setupSidebar();
-
-  $("#restart-game-button")?.addEventListener("click", () => {
-    if (currentGameInstance?.newRound) currentGameInstance.newRound();
-  });
-
-  renderHomePage();
-  navigateTo("home");
+  setupFilters();
+  renderCatalogCards();
 });
