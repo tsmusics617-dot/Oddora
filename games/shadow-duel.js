@@ -1,5 +1,5 @@
 /* =========================================================
-   ODDORA GAMES — PIXEL SHOWDOWN: SHADOW HUNT (EASY WIN RULES)
+   ODDORA GAMES � SHADOW HUNT (HTML5 CANVAS ARENA ENGINE)
    File: games/shadow-duel.js
    ========================================================= */
 
@@ -23,35 +23,33 @@ window.OddoraGames["shadow-duel"] = {
     let p1 = { x: 0, y: 0, hp: 100, traps: 2, revealedTurns: 0 };
     let p2 = { x: 5, y: 5, hp: 100, traps: 2, revealedTurns: 0 };
     let traps = [];
-    let logs = [];
 
     function renderSetupUI() {
       container.innerHTML = `
-        <div style="max-width: 480px; margin: 0 auto; text-align: center; background: var(--surface); padding: 20px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
-          <h2 style="font-size: 22px; font-weight: 900; margin-bottom: 6px; color: #a855f7;">🥷 Shadow Hunt</h2>
-          
-          <!-- HOW TO WIN CARD -->
-          <div style="background: rgba(168, 85, 247, 0.15); border: 1px solid #a855f7; padding: 14px; border-radius: 12px; text-align: left; margin-bottom: 20px; font-size: 12px;">
-            <div style="font-weight: 900; color: #a855f7; font-size: 14px; margin-bottom: 6px;">🎯 HOW TO WIN:</div>
-            <div style="margin-bottom: 8px;">Find and attack your opponent until their <b>HP reaches 0%</b>!</div>
-            
-            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0;">
-            
-            <div style="font-weight: 800; color: #a3e635; margin-bottom: 4px;">⚡ How to Attack:</div>
-            <div style="margin-bottom: 4px;">🎯 <b>Fire Cannon:</b> Deals <b>45 Damage</b> to nearby tile.</div>
-            <div>💣 <b>Plant Trap:</b> Deals <b>35 Damage</b> if stepped on.</div>
+        <div style="max-width: 480px; margin: 0 auto; text-align: center; background: #0a0e1a; padding: 28px 22px; border-radius: 24px; border: 2px solid rgba(167, 139, 250, 0.4); box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+          <div style="font-size: 56px; margin-bottom: 10px; filter: drop-shadow(0 0 15px #a855f7);"></div>
+          <h2 style="font-size: 26px; font-weight: 900; margin-bottom: 6px; color: #c084fc;">SHADOW HUNT ARENA</h2>
+          <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">
+            Tactical 2D Stealth Canvas Arena. Outsmart your rival in the fog of war!
+          </p>
+
+          <div style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.5); padding: 16px; border-radius: 16px; text-align: left; margin-bottom: 24px; font-size: 12px; color: #f8fafc;">
+            <div style="font-weight: 900; color: #a3e635; margin-bottom: 8px;"> HOW TO PLAY:</div>
+            <div style="margin-bottom: 6px;">1 Tap adjacent neon tiles to move silently (1 AP per step).</div>
+            <div style="margin-bottom: 6px;">2 Plant C4 Traps  or Fire Cannons  (-45 HP).</div>
+            <div>3 Reduce rival's HP to 0% to win!</div>
           </div>
           
-          <div style="margin-bottom: 20px; text-align: left;">
-            <label style="font-size: 11px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase;">Game Mode</label>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
-              <button id="sh-mode-p2" class="category-button active" style="padding: 10px;">👥 Pass & Play</button>
-              <button id="sh-mode-p1" class="category-button" style="padding: 10px;">🤖 vs AI Bot</button>
+          <div style="margin-bottom: 24px; text-align: left;">
+            <label style="font-size: 11px; font-weight: 900; color: #94a3b8; text-transform: uppercase;">Battle Mode</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
+              <button id="sh-mode-p2" class="category-button active" style="padding: 12px;"> Pass & Play</button>
+              <button id="sh-mode-p1" class="category-button" style="padding: 12px;"> vs AI Bot</button>
             </div>
           </div>
 
-          <button id="sh-start-btn" class="primary-button" style="width: 100%; padding: 14px; font-size: 16px;">
-            Start Battle 🔥
+          <button id="sh-start-btn" class="primary-button" style="width: 100%; padding: 16px; font-size: 16px;">
+            Launch Battle Arena 
           </button>
         </div>
       `;
@@ -75,7 +73,6 @@ window.OddoraGames["shadow-duel"] = {
       gameActive = true;
       activePlayer = 1;
       ap = 3;
-      logs = ["Battle Started! Reduce enemy HP to 0% to win."];
 
       p1 = { x: 0, y: 0, hp: 100, traps: 2, revealedTurns: 0 };
       p2 = { x: 5, y: 5, hp: 100, traps: 2, revealedTurns: 0 };
@@ -96,86 +93,101 @@ window.OddoraGames["shadow-duel"] = {
           .sh-board {
             display: grid;
             grid-template-columns: repeat(${GRID_SIZE}, 1fr);
-            gap: 6px;
-            max-width: 360px;
+            gap: 8px;
+            max-width: 380px;
             margin: 0 auto;
-            background: #090a10;
-            padding: 8px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            background: #03050c;
+            padding: 12px;
+            border-radius: 20px;
+            border: 2px solid rgba(167, 139, 250, 0.4);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 30px rgba(139, 92, 246, 0.25);
           }
           .sh-cell {
             aspect-ratio: 1;
-            background: #131522;
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 6px;
+            background: #0a0e1a;
+            border: 1px solid rgba(167, 139, 250, 0.15);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 24px;
             cursor: pointer;
             position: relative;
             user-select: none;
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           }
+          .sh-cell:active { transform: scale(0.88); }
           .sh-cell.self {
-            background: rgba(168, 85, 247, 0.25);
+            background: rgba(168, 85, 247, 0.35);
             border-color: #a855f7;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
           }
           .sh-cell.valid-move {
-            border: 1px dashed #10b981;
-            background: rgba(16, 185, 129, 0.1);
+            border: 2px dashed #10b981;
+            background: rgba(16, 185, 129, 0.18);
+            animation: moveGlow 1.2s infinite ease-in-out;
+          }
+          @keyframes moveGlow {
+            0% { border-color: rgba(16, 185, 129, 0.4); }
+            50% { border-color: rgba(16, 185, 129, 1); }
+            100% { border-color: rgba(16, 185, 129, 0.4); }
           }
           .sh-cell.revealed-enemy {
-            background: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.4);
             border-color: #ef4444;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.7);
           }
           .sh-cell.trap {
             border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.25);
           }
           .sh-controls {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            max-width: 360px;
-            margin: 12px auto 0;
+            gap: 10px;
+            max-width: 380px;
+            margin: 16px auto 0;
           }
           .sh-btn {
-            padding: 10px;
+            padding: 14px;
             font-size: 12px;
-            font-weight: 800;
-            border-radius: 8px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text-main);
+            font-weight: 900;
+            border-radius: 14px;
+            background: linear-gradient(180deg, #1e2647 0%, #101426 100%);
+            border: 1px solid rgba(167, 139, 250, 0.4);
+            color: #ffffff;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: all 0.15s ease;
           }
-          .sh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+          .sh-btn:hover { transform: translateY(-2px); }
+          .sh-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
           .hp-bar-bg {
             width: 100%;
-            height: 6px;
+            height: 10px;
             background: rgba(255,255,255,0.1);
-            border-radius: 3px;
+            border-radius: 5px;
             overflow: hidden;
-            margin-top: 4px;
+            margin-top: 6px;
           }
           .hp-bar-fill {
             height: 100%;
-            background: #ef4444;
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, #ef4444, #f87171);
+            transition: width 0.35s ease;
+            box-shadow: 0 0 10px #ef4444;
           }
         </style>
 
-        <!-- VISUAL HEALTH BARS -->
-        <div style="max-width: 360px; margin: 0 auto 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--surface); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
+        <div style="max-width: 380px; margin: 0 auto 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #0a0e1a; padding: 14px; border-radius: 16px; border: 1px solid rgba(167, 139, 250, 0.2);">
           <div>
-            <div style="font-size: 11px; font-weight: 900; color: #a855f7;">${pName}</div>
+            <div style="font-size: 12px; font-weight: 900; color: #c084fc;">${pName}</div>
             <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${curr.hp}%;"></div></div>
-            <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">HP: ${curr.hp}%</div>
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 4px; font-weight: 800;">HP: ${curr.hp}%</div>
           </div>
           <div>
-            <div style="font-size: 11px; font-weight: 900; color: #ef4444; text-align: right;">Enemy Target</div>
+            <div style="font-size: 12px; font-weight: 900; color: #ef4444; text-align: right;">Enemy Target</div>
             <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${opp.hp}%;"></div></div>
-            <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px; text-align: right;">HP: ${opp.hp}%</div>
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 4px; text-align: right; font-weight: 800;">HP: ${opp.hp}%</div>
           </div>
         </div>
 
@@ -194,13 +206,13 @@ window.OddoraGames["shadow-duel"] = {
 
           if (isSelf) {
             cellClass += " self";
-            icon = activePlayer === 1 ? "🥷" : "🤖";
+            icon = activePlayer === 1 ? "" : "";
           } else if (isEnemyRevealed) {
             cellClass += " revealed-enemy";
-            icon = "🎯";
+            icon = "";
           } else if (hasMyTrap) {
             cellClass += " trap";
-            icon = "💣";
+            icon = "";
           } else if (isValidMove) {
             cellClass += " valid-move";
           }
@@ -213,13 +225,13 @@ window.OddoraGames["shadow-duel"] = {
         </div>
 
         <div class="sh-controls">
-          <button id="sh-act-sonar" class="sh-btn" ${ap < 1 ? "disabled" : ""}>📡 Scan Radar (1 AP)</button>
-          <button id="sh-act-trap" class="sh-btn" ${ap < 1 || curr.traps < 1 ? "disabled" : ""}>💣 Plant Trap (1 AP)</button>
-          <button id="sh-act-shoot" class="sh-btn" style="grid-column: span 2; background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5;" ${ap < 2 ? "disabled" : ""}>🎯 Fire Cannon (-45 HP)</button>
+          <button id="sh-act-sonar" class="sh-btn" ${ap < 1 ? "disabled" : ""}> Radar Scan (1 AP)</button>
+          <button id="sh-act-trap" class="sh-btn" ${ap < 1 || curr.traps < 1 ? "disabled" : ""}> Plant Trap (1 AP)</button>
+          <button id="sh-act-shoot" class="sh-btn" style="grid-column: span 2; background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%); border-color: #f87171; color: #ffffff;" ${ap < 2 ? "disabled" : ""}> FIRE CANNON (-45 HP)</button>
         </div>
 
-        <div style="max-width: 360px; margin: 10px auto 0; font-size: 11px; color: #a3e635; text-align: center; font-weight: 800;">
-          ⚡ Turn Points Left: ${ap}/3
+        <div style="max-width: 380px; margin: 14px auto 0; font-size: 13px; color: #a3e635; text-align: center; font-weight: 900;">
+           Action Points: ${ap}/3
         </div>
       `;
 
@@ -241,7 +253,6 @@ window.OddoraGames["shadow-duel"] = {
             curr.x = tx;
             curr.y = ty;
             ap--;
-            addLog(`Moved silently.`);
             checkTraps();
             checkTurnEnd();
           }
@@ -256,7 +267,7 @@ window.OddoraGames["shadow-duel"] = {
           const opp = activePlayer === 1 ? p2 : p1;
           const quadX = opp.x < 3 ? "West" : "East";
           const quadY = opp.y < 3 ? "North" : "South";
-          context.showToast(`Enemy detected in ${quadY}-${quadX}!`, "warning");
+          context.showToast(`Radar: Enemy detected in ${quadY}-${quadX}!`, "warning");
           checkTurnEnd();
         };
       }
@@ -268,7 +279,7 @@ window.OddoraGames["shadow-duel"] = {
           ap--;
           curr.traps--;
           traps.push({ x: curr.x, y: curr.y, owner: activePlayer });
-          context.showToast("C4 Planted! Deals 35 Damage.", "success");
+          context.showToast("C4 Trap Planted! (-35 HP)", "success");
           checkTurnEnd();
         };
       }
@@ -285,9 +296,9 @@ window.OddoraGames["shadow-duel"] = {
 
           if (isHit) {
             opp.hp -= 45;
-            context.showToast("BOOM! Hit enemy for 45 damage! 🎯", "success");
+            context.showToast("DIRECT HIT!  -45 HP", "success");
           } else {
-            context.showToast("Shot Missed!", "error");
+            context.showToast("Shot Missed into the Void!", "error");
           }
 
           if (opp.hp <= 0) {
@@ -307,7 +318,7 @@ window.OddoraGames["shadow-duel"] = {
       if (hitTrapIdx !== -1) {
         curr.hp -= 35;
         traps.splice(hitTrapIdx, 1);
-        context.showToast("BOOM! Stepped on C4 Trap! -35 HP 💣", "error");
+        context.showToast("BOOM! Stepped on C4 Trap!  -35 HP", "error");
 
         if (curr.hp <= 0) endMatch();
       }
@@ -342,7 +353,7 @@ window.OddoraGames["shadow-duel"] = {
       if (Math.abs(p2.x - p1.x) <= 1 && Math.abs(p2.y - p1.y) <= 1 && ap >= 2) {
         p2.revealedTurns = 2;
         p1.hp -= 45;
-        context.showToast("AI Bot Sniped You! -45 HP 🎯", "error");
+        context.showToast("AI Bot Sniped You!  -45 HP", "error");
       } else {
         const dx = Math.sign(p1.x - p2.x);
         const dy = Math.sign(p1.y - p2.y);
@@ -359,35 +370,31 @@ window.OddoraGames["shadow-duel"] = {
       switchTurn();
     }
 
-    function addLog(msg) {
-      logs.push(msg);
-    }
-
     function endMatch() {
       gameActive = false;
       let winnerText = "";
       let res = "loss";
 
       if (p1.hp > 0 && p2.hp <= 0) {
-        winnerText = `🏆 ${context.getPlayerName()} Wins!`;
+        winnerText = ` ${context.getPlayerName()} Wins!`;
         res = "win";
       } else if (p2.hp > 0 && p1.hp <= 0) {
-        winnerText = mode === "p2" ? "🏆 Player 2 Wins!" : "🤖 AI Bot Wins!";
+        winnerText = mode === "p2" ? " Player 2 Wins!" : " AI Bot Wins!";
       } else {
-        winnerText = "🤝 Draw!";
+        winnerText = " Mutual Draw!";
         res = "draw";
       }
 
       context.recordResult(res);
 
       container.innerHTML = `
-        <div style="text-align:center; padding: 36px 20px; background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); max-width: 420px; margin: 0 auto;">
-          <div style="font-size: 52px; margin-bottom: 12px;">🎉</div>
-          <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 8px;">${winnerText}</h2>
-          <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">
-            Target destroyed!
+        <div style="text-align:center; padding: 40px 20px; background: #0a0e1a; border-radius: 24px; border: 2px solid rgba(167, 139, 250, 0.4); max-width: 420px; margin: 0 auto; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+          <div style="font-size: 56px; margin-bottom: 12px; filter: drop-shadow(0 0 15px #f59e0b);"></div>
+          <h2 style="font-size: 26px; font-weight: 900; margin-bottom: 8px;">${winnerText}</h2>
+          <p style="color: #94a3b8; font-size: 13px; margin-bottom: 24px;">
+            Battle concluded!
           </p>
-          <button id="sh-rematch-btn" class="primary-button" style="width: 100%; padding: 12px;">Play Again 🔄</button>
+          <button id="sh-rematch-btn" class="primary-button" style="width: 100%; padding: 14px;">Revenge Match </button>
         </div>
       `;
 

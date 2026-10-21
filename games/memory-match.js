@@ -1,5 +1,5 @@
 /* =========================================================
-   ODDORA GAMES — MEMORY MATCH (DUAL PLAYER & HARD MODE)
+   ODDORA GAMES � MEMORY MATCH (DUAL PLAYER & HARD MODE)
    File: games/memory-match.js
    ========================================================= */
 
@@ -27,10 +27,10 @@ window.OddoraGames["memory-match"] = {
     let timeLeft = 15;
 
     const THEMES = {
-      easy: ["🍎", "🍌", "🍇", "🍊", "🍓", "🍉"],
-      medium: ["🎮", "🕹️", "🎲", "🎯", "👾", "⚡", "🔥", "💎"],
-      hard: ["🚀", "🛸", "🪐", "🌟", "☄️", "🌌", "🛰️", "🛸", "👽", "🌙"],
-      extreme: ["🦁", "🐯", "🐻", "🦊", "🐼", "🐨", "🐸", "🐵", "🦄", "🐉", "🦅", "🐺"]
+      easy: ["", "", "", "", "", ""],
+      medium: ["", "", "", "", "", "", "", ""],
+      hard: ["", "", "", "", "", "", "", "", "", ""],
+      extreme: ["", "", "", "", "", "", "", "", "", "", "", ""]
     };
 
     const GRID_SIZES = {
@@ -43,13 +43,13 @@ window.OddoraGames["memory-match"] = {
     function renderSetupUI() {
       container.innerHTML = `
         <div style="max-width: 480px; margin: 0 auto; text-align: center; background: var(--surface); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
-          <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 16px;">🎮 Select Game Rules</h3>
+          <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 16px;"> Select Game Rules</h3>
           
           <div style="margin-bottom: 20px; text-align: left;">
             <label style="font-size: 11px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase;">Game Mode</label>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
-              <button id="mm-mode-p2" class="category-button active" style="padding: 10px;">👥 Pass & Play</button>
-              <button id="mm-mode-p1" class="category-button" style="padding: 10px;">🤖 vs AI Bot</button>
+              <button id="mm-mode-p2" class="category-button active" style="padding: 10px;"> Pass & Play</button>
+              <button id="mm-mode-p1" class="category-button" style="padding: 10px;"> vs AI Bot</button>
             </div>
           </div>
 
@@ -63,7 +63,7 @@ window.OddoraGames["memory-match"] = {
             </div>
           </div>
 
-          <button id="mm-start-btn" class="primary-button" style="width: 100%; padding: 14px;">Start Match 🔥</button>
+          <button id="mm-start-btn" class="primary-button" style="width: 100%; padding: 14px;">Start Match </button>
         </div>
       `;
 
@@ -165,7 +165,7 @@ window.OddoraGames["memory-match"] = {
           <div id="p1-box" class="player-box active">
             ${context.getPlayerName()}: <span id="p1-score">0</span>
           </div>
-          <div style="font-size: 11px; font-weight: 800; color: var(--warning);" id="turn-timer">⏱️ 15s</div>
+          <div style="font-size: 11px; font-weight: 800; color: var(--warning);" id="turn-timer"> 15s</div>
           <div id="p2-box" class="player-box">
             ${mode === "p2" ? "Player 2" : "AI Bot"}: <span id="p2-score">0</span>
           </div>
@@ -193,11 +193,11 @@ window.OddoraGames["memory-match"] = {
       clearInterval(turnTimer);
       timeLeft = 15;
       const timerEl = container.querySelector("#turn-timer");
-      if (timerEl) timerEl.textContent = `⏱️ ${timeLeft}s`;
+      if (timerEl) timerEl.textContent = ` ${timeLeft}s`;
 
       turnTimer = setInterval(() => {
         timeLeft--;
-        if (timerEl) timerEl.textContent = `⏱️ ${timeLeft}s`;
+        if (timerEl) timerEl.textContent = ` ${timeLeft}s`;
         if (timeLeft <= 0) {
           clearInterval(turnTimer);
           context.showToast("Time's up! Turn switched.", "warning");
@@ -242,7 +242,7 @@ window.OddoraGames["memory-match"] = {
         if (matchedPairs === totalPairs) {
           endGame();
         } else {
-          context.showToast(`Match! Streak x${streak} 🔥`, "success");
+          context.showToast(`Match! Streak x${streak} `, "success");
           resetTurnTimer();
           if (mode === "p1" && activePlayer === 2) {
             setTimeout(triggerAITurn, 800);
@@ -317,12 +317,12 @@ window.OddoraGames["memory-match"] = {
       let res = "loss";
 
       if (scores.p1 > scores.p2) {
-        winnerText = `🏆 ${context.getPlayerName()} Wins!`;
+        winnerText = ` ${context.getPlayerName()} Wins!`;
         res = "win";
       } else if (scores.p2 > scores.p1) {
-        winnerText = mode === "p2" ? "🏆 Player 2 Wins!" : "🤖 AI Bot Wins!";
+        winnerText = mode === "p2" ? " Player 2 Wins!" : " AI Bot Wins!";
       } else {
-        winnerText = "🤝 It's a Tie!";
+        winnerText = " It's a Tie!";
         res = "draw";
       }
 
@@ -330,12 +330,12 @@ window.OddoraGames["memory-match"] = {
 
       container.innerHTML = `
         <div style="text-align:center; padding: 36px 20px; background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); max-width: 420px; margin: 0 auto;">
-          <div style="font-size: 52px; margin-bottom: 12px;">🎉</div>
+          <div style="font-size: 52px; margin-bottom: 12px;"></div>
           <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 8px;">${winnerText}</h2>
           <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">
             Final Score: ${scores.p1} vs ${scores.p2}
           </p>
-          <button id="mm-rematch-btn" class="primary-button" style="width: 100%; padding: 12px;">Play Again 🔄</button>
+          <button id="mm-rematch-btn" class="primary-button" style="width: 100%; padding: 12px;">Play Again </button>
         </div>
       `;
 
